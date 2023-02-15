@@ -7,8 +7,8 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/sessions')
-  async sessions(@Body() sessionsDto: SessionDto, @Req() req): Promise<string> {
-    const result = await this.authService.sessions();
+  async sessions(@Body() sessionsDto: SessionDto, @Req() req) {
+    const result = await this.authService.sessions(sessionsDto);
     return result;
   }
 }

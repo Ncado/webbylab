@@ -8,7 +8,7 @@ import {
 import { MoviesModel } from '../movies/movies.model';
 import { ActorsModel } from './actors.model';
 
-@Table({ tableName: 'user_roles', createdAt: false, updatedAt: false })
+@Table({ createdAt: false, updatedAt: false })
 export class ActorsMoviesModel extends Model<ActorsMoviesModel> {
   @Column({
     type: DataType.INTEGER,

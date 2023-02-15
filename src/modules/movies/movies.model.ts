@@ -7,6 +7,7 @@ import {
 } from 'sequelize-typescript';
 import { ActorsModel } from '../actors/actors.model';
 import { ActorsMoviesModel } from '../actors/actors-movies.model';
+import { MoviesFormatEnum } from './enum/movies-format.enum';
 
 @Table({ createdAt: true, updatedAt: true })
 export class MoviesModel extends Model {
@@ -21,12 +22,14 @@ export class MoviesModel extends Model {
   @Column
   title: string;
 
-  @Column
-  format: number;
+  @Column({
+    type: DataType.ENUM(...Object.values(MoviesFormatEnum)),
+  })
+  format: MoviesFormatEnum;
 
   @Column
-  actors: string;
+  year: number;
 
   @BelongsToMany(() => ActorsModel, () => ActorsMoviesModel)
-  roles: ActorsModel[];
+  actors: ActorsModel[];
 }

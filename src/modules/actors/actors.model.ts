@@ -18,7 +18,7 @@ export class ActorsModel extends Model {
   })
   id: number;
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column({ type: DataType.STRING, allowNull: false, unique: true })
   name: string;
 
   @BelongsToMany(() => MoviesModel, () => ActorsMoviesModel) ç;

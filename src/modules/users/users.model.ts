@@ -1,13 +1,20 @@
-import { Column, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, Model, Table } from 'sequelize-typescript';
 
 @Table({ createdAt: true, updatedAt: true })
-export class UsersModel extends Model {
-  @Column({ primaryKey: true })
+export class UsersModel extends Model<UsersModel> {
+  @Column({
+    type: DataType.INTEGER,
+    unique: true,
+    autoIncrement: true,
+    primaryKey: true,
+  })
   id: number;
   @Column
   name: string;
 
-  @Column
+  @Column({
+    unique: true,
+  })
   email: string;
 
   @Column

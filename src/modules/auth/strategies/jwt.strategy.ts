@@ -39,9 +39,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return null;
   }
 
-  async validate(validationPayload: { sessionID: string }) {
-    const session = await this.sessionService.getSession(
-      validationPayload.sessionID,
+  async validate(validationPayload: { email: string }) {
+    const session = await this.usersService.getUserByEmail(
+      validationPayload.email,
     );
     if (!session) {
       throw new BadRequestException('please log in');
