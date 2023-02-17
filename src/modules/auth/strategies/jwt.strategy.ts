@@ -44,7 +44,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       validationPayload.email,
     );
     if (!session) {
-      throw new BadRequestException('please log in');
+      throw new BadRequestException('AUTHENTICATION_FAILED');
     }
 
     return await this.usersService.getUser();

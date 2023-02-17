@@ -21,6 +21,12 @@ import { SequelizeModule } from '@nestjs/sequelize';
     SequelizeModule.forRootAsync(databaseConfig.asProvider()),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: HttpExceptionFilter,
+    // },
+  ],
 })
 export class AppModule {}

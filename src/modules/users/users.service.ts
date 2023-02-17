@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { UsersModel } from './users.model';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -24,6 +24,10 @@ export class UsersService {
   }
 
   async createUser(createUserData: CreateUserDto) {
+    if (await this.getUserByEmail(createUserData.email)) {
+      throw new BadRequestException('user already exists');
+    }
+
     const bycriptedPassword = await this.passwordService.hashPassword(
       createUserData.password,
     );

@@ -15,5 +15,11 @@ services:
       - SQLITE_DB=sqlite
     ports:
       - 5432:5432
-
+  my-app:
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
 

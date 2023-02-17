@@ -13,11 +13,16 @@ export class ActorsService {
       where: { name: value },
     });
     if (actor) {
-      console.log(actor);
       return actor;
+    } else {
+      try {
+        const user = await this.actorsRepository.create({ name: value });
+        return user;
+      } catch (e) {
+        console.log('->>>>>>>>>>>>>>>->>>>>>>>>>>>>>>->>>>>>>>>>>>>>>', e);
+        console.log('->>>>>>>>>->>>>>>>>>>>>>>>->>>>>>>>>>>>>>>>>>>>>', value);
+      }
     }
-    const user = await this.actorsRepository.create({ name: value });
-    return user;
   }
 
   async getActors() {
