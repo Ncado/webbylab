@@ -5,6 +5,7 @@ import { MoviesModel } from './movies.model';
 import { ActorsService } from '../actors/actors.service';
 import { ActorsModel } from '../actors/actors.model';
 import { UpdateMovieDto } from './dto/update-movie.dto';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class MoviesService {
@@ -76,11 +77,47 @@ export class MoviesService {
   async getMovies<Key extends keyof MoviesModel>(
     actor,
     title,
+    search,
     sort,
     order,
     limit,
     offset,
   ) {
+    if (search) {
+      const movie2 = await this.moviesRepository.findAndCountAll({
+        where: {
+          [Op.or]: [
+            {
+              title: {
+                [Op.eq]: search,
+              },
+            },
+            {
+              '$actors.name$': {
+                [Op.eq]: search,
+              },
+            },
+          ],
+        },
+
+        order: [[sort, order]],
+        include: [
+          {
+            model: ActorsModel,
+            attributes: [],
+            through: {
+              attributes: [],
+            },
+            as: 'actors',
+          },
+        ],
+        limit: limit,
+        subQuery: false,
+        offset: offset,
+        distinct: true,
+      });
+      return { data: movie2.rows, meta: { total: movie2.count } };
+    }
     const movie = await this.moviesRepository.findAndCountAll({
       where: title,
 
@@ -181,6 +218,7 @@ export class MoviesService {
         (a, [k, v]) => ((!v && a.push({})) || (a[a.length - 1][k] = v), a),
         [{}],
       );
+
     arr.forEach((element, index) => {
       if (JSON.stringify(element) != '{}') {
         element['title'] = element['Title'];
@@ -192,30 +230,28 @@ export class MoviesService {
         delete element['Release Year'];
         delete element['Format'];
         delete element['Stars'];
-      }
-      if (JSON.stringify(element) == '{}') {
-        arr.splice(index, 1);
+      } else {
+        arr[index] = undefined;
       }
     });
-    try {
-      for (const element of arr) {
-        await this.createMovie(element as CreateMovieDto);
+    let result = arr.filter((item) => item);
+
+    for (const [index, value] of result.entries()) {
+      //console.log('))))))))>', value);
+      try {
+        await this.createMovie(value as CreateMovieDto);
+      } catch (e) {
+        result[index] = undefined;
       }
-      return {
-        data: 2222,
-        // meta: {
-        //   imported: arr.length,
-        //   total: 33,
-        // },
-      };
-    } catch (e) {
-      return {
-        data: arr,
-        meta: {
-          imported: arr.length,
-          total: await this.moviesRepository.count(),
-        },
-      };
     }
+    result = result.filter((item) => item);
+
+    return {
+      data: result,
+      meta: {
+        imported: result.length,
+        total: await this.moviesRepository.count(),
+      },
+    };
   }
 }

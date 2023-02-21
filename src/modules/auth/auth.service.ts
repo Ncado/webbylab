@@ -38,7 +38,11 @@ export class AuthService {
   }
 
   async createUser(dto: CreateUserDto) {
+    if (dto.password != dto.confirmPassword) {
+      throw new BadRequestException("Password don't match");
+    }
     const user = await this.usersService.createUser(dto);
+
     delete user.dataValues['password'];
     const access_token = await this.issueToken(user.dataValues);
     return { token: access_token };
